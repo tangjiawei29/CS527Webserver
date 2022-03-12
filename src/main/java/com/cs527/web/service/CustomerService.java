@@ -1,4 +1,4 @@
-package com.cs527.web.Service;
+package com.cs527.web.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.cs527.web.controller;
 
-import com.cs527.web.Service.CustomerService;
+import com.cs527.web.service.CustomerService;
 import com.cs527.web.entity.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
