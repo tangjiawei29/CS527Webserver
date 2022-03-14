@@ -1,6 +1,6 @@
 package com.cs527.web.test;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 import java.sql.*;
 import java.util.Properties;
@@ -20,7 +20,7 @@ public class ConnectionManager {
 
 	private Connection connection = null;
 
-	@Test
+//	@Test
 	public void connect() {
 		// Dynamically load driver at runtime.
 		try {
