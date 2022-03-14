@@ -12,24 +12,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    public List<Customer> getList(){
-        String sql = "SELECT *  FROM customer";
-        return (List<Customer>) jdbcTemplate.query(sql, new RowMapper<Customer>(){
-
-            @Override
-            public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Customer cus = new Customer();
-                cus.setCustomerID(rs.getInt("CustomerID"));
-                cus.setCustomer_ContactName(rs.getString("Customer_ContactName"));
-                cus.setCustomer_Phone(rs.getString("Customer_Phone"));
-                cus.setCompanyName(rs.getString("CompanyName"));
-                cus.setPlaceId(rs.getInt("PlaceId"));
-                return cus;
-            }
-
-        });
-    }
+    // @Autowired
+    // private JdbcTemplate jdbcTemplate;
+    //
+    // public List<Customer> getList(){
+    //     String sql = "SELECT *  FROM customer";
+    //     return (List<Customer>) jdbcTemplate.query(sql, new RowMapper<Customer>(){
+    //
+    //         @Override
+    //         public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+    //             Customer cus = new Customer();
+    //             cus.setCustomerID(rs.getInt("CustomerID"));
+    //             cus.setCustomer_ContactName(rs.getString("Customer_ContactName"));
+    //             cus.setCustomer_Phone(rs.getString("Customer_Phone"));
+    //             cus.setCompanyName(rs.getString("CompanyName"));
+    //             cus.setPlaceId(rs.getInt("PlaceId"));
+    //             return cus;
+    //         }
+    //
+    //     });
+    // }
 }
