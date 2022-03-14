@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: cs527-retail-order
+
+  jpa:
+    show-sql: true
+  datasource:
+    RDS:
+      driverClassName: com.mysql.jdbc.Driver
+      jdbc-url: dbc:mysql://mysql8.cu9om5uiyqcx.us-east-1.rds.amazonaws.com:3306/dbtest12
+      username: admin
+      password: rutgerscs527
+
+
+    Redshift:
+      driverClassName: com.amazon.redshift.jdbc42.Driver
+      jdbc-url: jdbc:redshift://redshift-cluster-1.ct9e2j27bris.us-east-1.redshift.amazonaws.com:5439/cs527
+      username: admin
+      password: Rutgerscs527
