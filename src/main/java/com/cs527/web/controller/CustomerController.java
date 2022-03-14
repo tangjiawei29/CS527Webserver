@@ -17,9 +17,9 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @RequestMapping("/list")
-    public List<Customer> getCustomerList(){
-        logger.info("getCustomerList");
-        return customerService.getList();
-    }
+    // @RequestMapping("/list")
+    // public List<Customer> getCustomerList(){
+    //     logger.info("getCustomerList");
+    //     return customerService.getList();
+    // }
 }
