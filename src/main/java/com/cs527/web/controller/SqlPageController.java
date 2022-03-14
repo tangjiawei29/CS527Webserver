@@ -24,13 +24,13 @@ public class SqlPageController {
         return sqlService.execute(sql);
     }
 
-    // @PostMapping("/rds")
-    // public Result rdsExec(@RequestBody String sql) {
-    //     return sqlService.rdsExecute(sql);
-    // }
-    //
-    // @PostMapping("/redshift")
-    // public Result redshiftExec(@RequestBody String sql) {
-    //     return sqlService.redshiftExecute(sql);
-    // }
+     @PostMapping("/rds")
+     public Result rdsExec(@RequestBody String sql) {
+         return sqlService.rdsExecute(sql);
+     }
+
+     @PostMapping("/redshift")
+     public Result redshiftExec(@RequestBody String sql) {
+         return sqlService.redshiftExecute(sql);
+     }
 }
