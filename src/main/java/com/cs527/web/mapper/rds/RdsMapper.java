@@ -1,4 +1,4 @@
- package com.cs527.web.mapper;
+ package com.cs527.web.mapper.rds;
 
  import org.apache.ibatis.annotations.Mapper;
 

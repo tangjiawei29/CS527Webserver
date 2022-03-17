@@ -1,4 +1,4 @@
- package com.cs527.web.mapper;
+ package com.cs527.web.mapper.redshift;
 
  import org.apache.ibatis.annotations.Mapper;
  import org.springframework.stereotype.Repository;

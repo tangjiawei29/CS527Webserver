@@ -19,11 +19,6 @@ public class SqlPageController {
     @Autowired
     SqlService sqlService;
 
-    @PostMapping("/exec")
-    public Result exec(@RequestBody String sql) {
-        return sqlService.execute(sql);
-    }
-
      @PostMapping("/rds")
      public Result rdsExec(@RequestBody String sql) {
          return sqlService.rdsExecute(sql);
@@ -31,6 +26,7 @@ public class SqlPageController {
 
      @PostMapping("/redshift")
      public Result redshiftExec(@RequestBody String sql) {
+         System.out.println("redshift");
          return sqlService.redshiftExecute(sql);
      }
 }

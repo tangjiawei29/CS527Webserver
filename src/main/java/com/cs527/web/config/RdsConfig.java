@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan(
-		basePackages = "com.cs527.web.mapper",
+		basePackages = "com.cs527.web.mapper.rds",
 		sqlSessionFactoryRef = "PrimarySqlSessionFactory",
 		sqlSessionTemplateRef = "PrimarySqlSessionTemplate")
 public class RdsConfig {
@@ -38,7 +38,7 @@ public class RdsConfig {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setDataSource(datasource);
 		bean.setMapperLocations(
-				new PathMatchingResourcePatternResolver().getResources("classpath*:mybatis/*.xml"));
+				new PathMatchingResourcePatternResolver().getResources("classpath*:mybatis/rds/*.xml"));
 		return bean.getObject();// 设置mybatis的xml所在位置
 	}
 
