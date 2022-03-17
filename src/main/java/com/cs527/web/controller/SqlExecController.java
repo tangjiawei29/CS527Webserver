@@ -16,11 +16,6 @@ public class SqlExecController {
     @Autowired
     SqlService sqlService;
 
-    @PostMapping("/exec")
-    public Result exec(@RequestBody String sql) {
-        return sqlService.execute(sql);
-    }
-
     @PostMapping("/rds")
     public Result rdsExec(@RequestBody String sql) {
         return sqlService.rdsExecute(sql);
