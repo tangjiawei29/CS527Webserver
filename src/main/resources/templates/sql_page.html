@@ -77,17 +77,27 @@
 <hr class="solid">
 
 <div class="row">
-    <div class="col-2">
-        <button type="button" class="btn btn-primary" id="button-run">Run</button>
+    <div class="col-12">
+        <button type="button" class="btn btn-primary w-100" id="button-run">Run</button>
     </div>
-    <div class="col-6">
-        <label id="status">Query Status: <span class="lead" id="status-content"></span> </label>
-    </div>
-    <div class="col-4">
-        <label id="time-elapsed">Time Elapsed: <span class="lead" id="exec-time"></span> </label>
-    </div>
-
 </div>
+
+<hr class="solid">
+
+<div class="row">
+    <div class="row">
+        <div class="col-12">
+            <label id="status">Query Status: <strong id="status-content"></strong> </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label id="time-elapsed">Time Elapsed: <strong id="exec-time"></strong> </label>
+        </div>
+    </div>
+</div>
+
+<hr class="solid">
 
 <div id="result-table"></div>
 
@@ -110,7 +120,7 @@
     });
 
     $.makeTable = function (data) {
-        let table = $('<table class="table table-bordered table-hover">');
+        let table = $('<table class="table table-bordered table-hover table-striped">');
         let tblHeader = "<thead><tr>";
         for (let k in data[0]) tblHeader += "<th scope='col'>" + k + "</th>";
         tblHeader += "</tr></thead>";
