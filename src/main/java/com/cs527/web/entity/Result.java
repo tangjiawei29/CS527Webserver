@@ -2,6 +2,7 @@ package com.cs527.web.entity;
 
 public class Result {
     private String data;
+    private String status;
     private long elapsedTime;
 
     public String getData() {
@@ -18,5 +19,13 @@ public class Result {
 
     public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

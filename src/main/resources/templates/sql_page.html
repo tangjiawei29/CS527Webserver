@@ -16,6 +16,28 @@
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js">
+    </script>
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/sql/sql.min.js">
+    </script>
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/sql-hint.min.js">
+    </script>
+
+    <style>
+        hr.solid {
+            border-top: 2px solid #999;
+        }
+    </style>
     <title>CS527 - Project 1</title>
 </head>
 <body>
@@ -24,9 +46,11 @@
 <div class="top-container">
     <div class="row">
         <div class="col">
-            <label id="database-name">Database:</label>
+            <h1 id="database-name" class="display-1">Database:</h1>
         </div>
-
+    </div>
+    <div class="row">
+        <div class="col-3"></div>
         <div class="col">
             <input class="form-check-input" type="radio" name="radio" id="radio-mysql" checked="checked">
             <label class="form-check-label" for="radio-mysql">
@@ -39,19 +63,28 @@
                 RedShift
             </label>
         </div>
+        <div class="col-3"></div>
     </div>
-</div>
-<div class="form-group">
-    <label for="Textarea1">Query:</label>
-    <textarea class="form-control rounded-0" id="Textarea1" rows="10"></textarea>
 </div>
 
+<hr class="solid">
+
+<div id="editor"></div>
+<!--<div class="form-group">-->
+<!--    <label for="Textarea1">Query:</label>-->
+<!--    <textarea class="form-control rounded-0" id="Textarea1" rows="10"></textarea>-->
+<!--</div>-->
+<hr class="solid">
+
 <div class="row">
-    <div class="col">
+    <div class="col-2">
         <button type="button" class="btn btn-primary" id="button-run">Run</button>
     </div>
-    <div class="col">
-        <label id="time-elapsed">Time Elapsed:</label>
+    <div class="col-6">
+        <label id="status">Query Status: <span class="lead" id="status-content"></span> </label>
+    </div>
+    <div class="col-4">
+        <label id="time-elapsed">Time Elapsed: <span class="lead" id="exec-time"></span> </label>
     </div>
 
 </div>
@@ -61,6 +94,13 @@
 </body>
 
 <script>
+    const editor = CodeMirror(document.querySelector('#editor'), {
+        lineNumbers: true,
+        tabSize: 2,
+        mode: 'text/x-mysql',
+        theme: 'dracula'
+    });
+
     let queryUrl = '/ds/rds'
     $('#radio-mysql').click(function() {
         queryUrl = '/ds/rds'
@@ -69,13 +109,14 @@
         queryUrl = '/ds/redshift'
     });
 
-    $.makeTable = function (mydata) {
-        let table = $('<table border=1>');
-        let tblHeader = "<tr>";
-        for (let k in mydata[0]) tblHeader += "<th>" + k + "</th>";
-        tblHeader += "</tr>";
+    $.makeTable = function (data) {
+        let table = $('<table class="table table-bordered table-hover">');
+        let tblHeader = "<thead><tr>";
+        for (let k in data[0]) tblHeader += "<th scope='col'>" + k + "</th>";
+        tblHeader += "</tr></thead>";
         $(tblHeader).appendTo(table);
-        $.each(mydata, function (index, value) {
+        $('<tbody>').appendTo(table);
+        $.each(data, function (index, value) {
             let TableRow = "<tr>";
             $.each(value, function (key, val) {
                 TableRow += "<td>" + val + "</td>";
@@ -83,6 +124,7 @@
             TableRow += "</tr>";
             $(table).append(TableRow);
         });
+        $('</tbody>').appendTo(table);
         return ($(table));
     };
 
@@ -90,13 +132,19 @@
         $.ajax({
             type: "POST",
             url: queryUrl,
-            data: $.trim($("#Textarea1").val()),
+            // data: $.trim($("#Textarea1").val()),
+            data: editor.getValue(),
             success: function( result ) {
+                console.log(editor.getValue())
                 $('#result-table').empty()
                 console.log("success:", result)
                 let jData = JSON.parse(result.data)
                 let elapsedTime = result.elapsedTime
-                $('#time-elapsed').text(`Time Elapsed: ${elapsedTime} ms`)
+                let status = result.status
+                // $('#time-elapsed').text(`Time Elapsed: ${elapsedTime} ms`)
+                $('#exec-time').text(`${elapsedTime} ms`)
+                // $('#status').text(`Query Status: ${status}`)
+                $('#status-content').text(status)
                 let table = $.makeTable(jData)
                 $(table).appendTo('#result-table')
             },

@@ -27,8 +27,10 @@ public class SqlService {
 			String ret = objectMapper.writeValueAsString(rdsMapper.exec(sql));
 			result.setElapsedTime((System.nanoTime() - startTime) / 1000000);
 			result.setData(ret);
-		} catch (JsonProcessingException e) {
+			result.setStatus("Query completed");
+		} catch (Exception e) {
 			e.printStackTrace();
+			result.setStatus(e.getCause().getMessage());
 		}
 		return result;
 	}
@@ -42,8 +44,10 @@ public class SqlService {
 			String ret = objectMapper.writeValueAsString(redshiftMapper.exec(sql));
 			result.setElapsedTime((System.nanoTime() - startTime) / 1000000);
 			result.setData(ret);
-		} catch (JsonProcessingException e) {
+			result.setStatus("Query completed");
+		} catch (Exception e) {
 			e.printStackTrace();
+			result.setStatus(e.getCause().getMessage());
 		}
 		return result;
 	}
