@@ -9,6 +9,9 @@ import com.cs527.web.mapper.redshift.abc.RedshiftABCMapper;
 import com.cs527.web.mapper.redshift.instacart.RedshiftInstacartMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,6 +52,8 @@ public class SqlService {
 	private String exec(InstanceType instance, DatabaseName database, String sql) throws JsonProcessingException {
 		if (instance == null || database == null) throw new NullPointerException();
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		switch (instance) {
 			case RDS: {
 				switch (database) {

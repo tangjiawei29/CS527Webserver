@@ -19,6 +19,7 @@ public class SqlExecController {
 
     @PostMapping("/{instance}/{database}")
     public Result sqlExec(@PathVariable("instance") String instance, @PathVariable("database") String database, @RequestBody String sql) {
+        sql = sql.trim();
         return sqlService.exec(instance, database, sql);
     }
 }
