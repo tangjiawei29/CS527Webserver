@@ -199,11 +199,11 @@
         return `/ds/${queryInstance}/${queryDatabase}`;
     }
 
-    $("#button-run").click(function (index) {
+    $("#button-run").click(function () {
         $.ajax({
             type: "POST",
             url: getQueryUrl(),
-            data: editor.getValue(index),
+            data: editor.getValue(),
             beforeSend: function () {
                 clearLabel()
                 $('#status-content').append('<span id="#query-status" class="spinner-border text-primary spinner-border-sm" role="status"> <span class="visually-hidden"/> </span>')
