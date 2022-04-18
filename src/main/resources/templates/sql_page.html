@@ -37,43 +37,69 @@
         hr.solid {
             border-top: 2px solid #999;
         }
+        .dropdown-menu {
+            min-width:125px;
+        }
     </style>
     <title>CS527 - Project 1</title>
 </head>
 <body>
 
-
-<div class="top-container">
-    <div class="row">
-        <div class="col">
-            <h1 id="database-name" class="display-1">Database:</h1>
-        </div>
+<div class="p-3 mb-2 bg-dark bg-gradient text-white">
+    <!--    <span>Instance</span>-->
+    <span class="vr"></span>
+    <div class="btn-group">
+        <button id="selected-instance" type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false" style="width: 125px;">
+            MySQL
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <button id="rds" class="dropdown-item">MySQL</button>
+            </li>
+            <li>
+                <button id="redshift" class="dropdown-item">Redshift</button>
+            </li>
+        </ul>
     </div>
-    <div class="row">
-        <div class="col-3"></div>
-        <div class="col">
-            <input class="form-check-input" type="radio" name="radio" id="radio-mysql" checked="checked">
-            <label class="form-check-label" for="radio-mysql">
-                MySQL
-            </label>
-        </div>
-        <div class="col">
-            <input class="form-check-input" type="radio" name="radio" id="radio-redshift">
-            <label class="form-check-label" for="radio-redshift">
-                RedShift
-            </label>
-        </div>
-        <div class="col-3"></div>
+<!--    <span>Database</span>-->
+    <span class="vr"></span>
+    <div class="btn-group">
+        <button id="selected-database" type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false" style="width: 125px;">
+            instacart
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <button id="abc-retail" class="dropdown-item">ABC Retail</button>
+            </li>
+            <li>
+                <button id="instacart" class="dropdown-item">instacart</button>
+            </li>
+        </ul>
     </div>
 </div>
+<!--<div class="top-container">-->
+<!--    <div class="row align-bottom">-->
+<!--        <div class="col-4">-->
+<!--            <h1 id="database-name" class="display-4">Database:</h1>-->
+<!--        </div>-->
+<!--        <div class="col d-flex align-items-center">-->
+<!--            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">-->
+<!--                <input type="radio" class="btn-check" name="btnradio" id="radio-mysql" autocomplete="off" checked>-->
+<!--                <label class="btn btn-outline-primary" for="radio-mysql">MySQL</label>-->
+
+<!--                <input type="radio" class="btn-check" name="btnradio" id="radio-redshift" autocomplete="off">-->
+<!--                <label class="btn btn-outline-primary" for="radio-redshift">Redshift</label>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <hr class="solid">
 
 <div id="editor"></div>
-<!--<div class="form-group">-->
-<!--    <label for="Textarea1">Query:</label>-->
-<!--    <textarea class="form-control rounded-0" id="Textarea1" rows="10"></textarea>-->
-<!--</div>-->
+
 <hr class="solid">
 
 <div class="row">
@@ -87,12 +113,21 @@
 <div class="row">
     <div class="row">
         <div class="col-12">
-            <label id="status">Query Status: <strong id="status-content"></strong> </label>
+            <label id="status">Query Status: <strong id="status-content"></strong>
+<!--                <span id="#query-status" class="spinner-border text-primary spinner-border-sm" role="status">-->
+<!--                    <span class="visually-hidden"></span>-->
+<!--                </span>-->
+            </label>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
             <label id="time-elapsed">Time Elapsed: <strong id="exec-time"></strong> </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label id="total-rows">Total rows: <strong id="row-number"></strong> </label>
         </div>
     </div>
 </div>
@@ -110,23 +145,38 @@
         mode: 'text/x-mysql',
         theme: 'dracula'
     });
+    editor.setSize(null, 175);
 
-    let queryUrl = '/ds/rds'
-    $('#radio-mysql').click(function() {
-        queryUrl = '/ds/rds'
-    });
-    $('#radio-redshift').click(function() {
-        queryUrl = '/ds/redshift'
+    let queryInstance = 'rds', queryDatabase = 'instacart';
+
+    $('#rds').click(function () {
+        queryInstance = 'rds';
+        $('#selected-instance').html('MySQL');
     });
 
-    $.makeTable = function (data) {
+    $('#redshift').click(function () {
+        queryInstance = 'redshift';
+        $('#selected-instance').html('Redshift');
+    });
+
+    $('#instacart').click(function () {
+        queryDatabase = 'instacart';
+        $('#selected-database').html('Instacart');
+    });
+
+    $('#abc-retail').click(function () {
+        queryDatabase = 'abc';
+        $('#selected-database').html('ABC Retail');
+    });
+
+    $.makeTable = function (tData) {
         let table = $('<table class="table table-bordered table-hover table-striped">');
-        let tblHeader = "<thead><tr>";
-        for (let k in data[0]) tblHeader += "<th scope='col'>" + k + "</th>";
+        let tblHeader = "<thead class='table-dark'><tr>";
+        for (let k in tData[0]) tblHeader += "<th scope='col'>" + k + "</th>";
         tblHeader += "</tr></thead>";
         $(tblHeader).appendTo(table);
         $('<tbody>').appendTo(table);
-        $.each(data, function (index, value) {
+        $.each(tData, function (index, value) {
             let TableRow = "<tr>";
             $.each(value, function (key, val) {
                 TableRow += "<td>" + val + "</td>";
@@ -138,25 +188,41 @@
         return ($(table));
     };
 
-    $("button").click(function () {
+    const clearLabel = function () {
+        $('#result-table').empty()
+        $('#exec-time').empty()
+        $('#status-content').empty()
+        $('#row-number').empty()
+    }
+
+    const getQueryUrl = function () {
+        return `/ds/${queryInstance}/${queryDatabase}`;
+    }
+
+    $("#button-run").click(function (index) {
         $.ajax({
             type: "POST",
-            url: queryUrl,
-            // data: $.trim($("#Textarea1").val()),
-            data: editor.getValue(),
-            success: function( result ) {
-                console.log(editor.getValue())
-                $('#result-table').empty()
-                console.log("success:", result)
-                let jData = JSON.parse(result.data)
+            url: getQueryUrl(),
+            data: editor.getValue(index),
+            beforeSend: function () {
+                clearLabel()
+                $('#status-content').append('<span id="#query-status" class="spinner-border text-primary spinner-border-sm" role="status"> <span class="visually-hidden"/> </span>')
+            },
+            complete: function () {
+                $('#query-status').remove()
+            },
+            success: function (result) {
+                console.log(result)
+                if (result.data !== null) {
+                    let tableData = JSON.parse(result.data)
+                    $('#row-number').text(tableData.length)
+                    let table = $.makeTable(tableData)
+                    $(table).appendTo('#result-table')
+                }
                 let elapsedTime = result.elapsedTime
                 let status = result.status
-                // $('#time-elapsed').text(`Time Elapsed: ${elapsedTime} ms`)
                 $('#exec-time').text(`${elapsedTime} ms`)
-                // $('#status').text(`Query Status: ${status}`)
                 $('#status-content').text(status)
-                let table = $.makeTable(jData)
-                $(table).appendTo('#result-table')
             },
             contentType: 'text/plain'
         });

@@ -1,10 +1,12 @@
 package com.cs527.web.service;
 
 import com.cs527.web.entity.Result;
-// import com.cs527.web.mapper.rds.RdsMapper;
-// import com.cs527.web.mapper.redshift.RedshiftMapper;
-import com.cs527.web.mapper.rds.RdsMapper;
-import com.cs527.web.mapper.redshift.RedshiftMapper;
+import com.cs527.web.enums.DatabaseName;
+import com.cs527.web.enums.InstanceType;
+import com.cs527.web.mapper.rds.abc.RdsABCMapper;
+import com.cs527.web.mapper.rds.instacart.RdsInstacartMapper;
+import com.cs527.web.mapper.redshift.abc.RedshiftABCMapper;
+import com.cs527.web.mapper.redshift.instacart.RedshiftInstacartMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -14,41 +16,58 @@ import javax.annotation.Resource;
 @Service
 public class SqlService {
 	@Resource
-	private RdsMapper rdsMapper;
+	private RdsABCMapper rdsABCMapper;
 
 	@Resource
-	private RedshiftMapper redshiftMapper;
+	private RedshiftABCMapper redshiftABCMapper;
 
-	public Result rdsExecute(String sql) {
-		ObjectMapper objectMapper = new ObjectMapper();
+	@Resource
+	private RdsInstacartMapper rdsInstacartMapper;
+
+	@Resource
+	private RedshiftInstacartMapper redshiftInstacartMapper;
+
+	public Result exec(String instance, String database, String sql) {
 		Result result = new Result();
 		try {
 			long startTime = System.nanoTime();
-			String ret = objectMapper.writeValueAsString(rdsMapper.exec(sql));
+			String ret = exec(InstanceType.parse(instance), DatabaseName.parse(database), sql);
 			result.setElapsedTime((System.nanoTime() - startTime) / 1000000);
 			result.setData(ret);
 			result.setStatus("Query completed");
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.setStatus(e.getCause().getMessage());
+			if (e.getCause() == null) {
+				result.setStatus(e.getMessage());
+			} else {
+				result.setStatus(e.getCause().getMessage());
+			}
 		}
 		return result;
 	}
 
-	public Result redshiftExecute(String sql) {
+	private String exec(InstanceType instance, DatabaseName database, String sql) throws JsonProcessingException {
+		if (instance == null || database == null) throw new NullPointerException();
 		ObjectMapper objectMapper = new ObjectMapper();
-		Result result = new Result();
-		try {
-			long startTime = System.nanoTime();
-			System.out.println(sql);
-			String ret = objectMapper.writeValueAsString(redshiftMapper.exec(sql));
-			result.setElapsedTime((System.nanoTime() - startTime) / 1000000);
-			result.setData(ret);
-			result.setStatus("Query completed");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setStatus(e.getCause().getMessage());
+		switch (instance) {
+			case RDS: {
+				switch (database) {
+					case Instacart:
+						return objectMapper.writeValueAsString(rdsInstacartMapper.exec(sql));
+					case ABCRetail:
+						return objectMapper.writeValueAsString(rdsABCMapper.exec(sql));
+				}
+			}
+			case Redshift: {
+				switch (database) {
+					case Instacart:
+						return objectMapper.writeValueAsString(redshiftInstacartMapper.exec(sql));
+					case ABCRetail:
+						return objectMapper.writeValueAsString(redshiftABCMapper.exec(sql));
+				}
+			}
 		}
-		return result;
+
+		return "";
 	}
 }
